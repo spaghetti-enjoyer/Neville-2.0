@@ -1,0 +1,28 @@
+build
+opencv-build
+opencv-install
+dependencies/opencv/build
+
+
+todosies
+test.sh
+
+# Build directories
+/build/
+/opencv-build/
+/opencv-install/
+
+# CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# VSCode metadata
+.vscode/*
+!.vscode/settings.json
+
+# Backup files
+*.swp
+*.swo
+*.DS_Store

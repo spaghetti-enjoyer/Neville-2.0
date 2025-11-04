@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "vector": "cpp"
+    },
+
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/include",
+        "${workspaceFolder}/dependencies/serial/include",
+        "${workspaceFolder}/opencv-install/include",
+        "${workspaceFolder}/opencv-install/include/opencv4"
+    ],
+    "C_Cpp.default.cppStandard": "c++17"
+}
