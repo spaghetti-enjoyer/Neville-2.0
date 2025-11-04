@@ -1,6 +1,3 @@
-#include <vector>
-#include <cstdint>
-#include <fstream>
 #include <serial/serial.h>
 
 namespace motor

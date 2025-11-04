@@ -1,22 +1,11 @@
 #include "neville.hpp"
 #include <iostream>
 
-Neville::Neville(const std::string& port)
+Neville::Neville(const std::string& port) : serial(port, 9600, serial::Timeout::simpleTimeout(1000)) 
 {
-    try
+    if (!serial.isOpen())
     {
-        serial.setPort(port);
-        serial.setBaudrate(9600);
-
-        serial.open();
-        if (!serial.isOpen())
-        {
-            std::cerr << "Warning: Could not open serial port " << port << ". Continuing without serial.\n";
-        }
-
-    } catch (const std::exception& e)
-    {
-        std::cerr << "Serial error: " << e.what() << ". Continuing without serial.\n";
+        std::cerr << "Cannot initialize port\n";
     }
 }
 
@@ -29,7 +18,7 @@ int Neville::activate_motor(uint8_t motor, uint8_t dir, uint8_t speed)
     }
     uint8_t command = motor + dir;
     std::vector<uint8_t> bytes = { command, speed };
-    return write_bytes(bytes);
+    return serial.write(bytes);
 }
 
 int Neville::buzz()
@@ -37,12 +26,5 @@ int Neville::buzz()
     std::vector<uint8_t> bytes = {
         0xB3, 0x0D, 0x21, 'O', '2', 'C', '8', 'O', '3', 'C', '8', 'O', '4', 'C', '8'
     };
-    return write_bytes(bytes);
-}
-
-int Neville::write_bytes(const std::vector<uint8_t> &bytes) 
-{
-    if (!serial.isOpen()) return 0;
-    size_t written = serial.write(bytes);
-    return (written == bytes.size());
+    return serial.write(bytes);
 }
