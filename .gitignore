@@ -26,3 +26,7 @@ Makefile
 *.swp
 *.swo
 *.DS_Store
+
+
+# why is this even here
+/opencv-source/

@@ -27,5 +27,4 @@ class Neville
 
     private:
         serial::Serial serial;
-        int write_bytes(const std::vector<uint8_t> &bytes);
 };

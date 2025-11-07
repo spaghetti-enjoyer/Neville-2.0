@@ -17,7 +17,6 @@ int main()
     while (true)
     {
         int key = cv::waitKey(30);
-        // std::cout << key << std::endl;
         if (key == 27) break; // esc pressed
 
         switch(key)
@@ -47,7 +46,7 @@ int main()
         }
 
         video >> frame;
-        // cv::rotate(frame, frame, cv::ROTATE_90_COUNTERCLOCKWISE);
+        cv::rotate(frame, frame, cv::ROTATE_90_COUNTERCLOCKWISE);
         cv::imshow("camera " + std::to_string(cam_index), frame);
     }
 }
