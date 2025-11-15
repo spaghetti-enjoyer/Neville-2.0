@@ -10,6 +10,14 @@
 #### Windows
 - WSL2
 
+#### Linux camera/GUI toolchain
+OpenCV's `cv::imshow` and `cv::waitKey` need a GUI backend (GTK) and Video4Linux. Install these once before running `scripts/build-opencv.sh`:
+
+```bash
+sudo apt update
+sudo apt install -y libgtk-3-dev libv4l-dev pkg-config v4l-utils
+```
+
 
 ### How to run your code
 
@@ -40,6 +48,81 @@ make
 
 After your code is compiled, you will be able to run the executable with `./build/main` from the root of the project (or just `./main` if you are already in the `build/` directory)
 
+#### Quick command recap
+
+```bash
+# Build OpenCV with GTK/V4L support
+chmod +x scripts/build-opencv.sh
+./scripts/build-opencv.sh
+
+# Configure & build Neville once
+cmake -S . -B build
+cmake --build build
+
+# (Optional) recompile after code changes
+cmake --build build
+
+# Check serial permissions and groups
+./scripts/check-serial-perms.sh
+
+# Run the robot UI (requires GUI/camera access)
+./build/main
+```
+
+### Keyboard controls
+
+Once the OpenCV window is focused, use the following keys to drive Neville:
+
+| Key | Action |
+| --- | ------ |
+| `w` | Drive forward |
+| `s` | Reverse |
+| `a` | Turn left (right wheel forward) |
+| `d` | Turn right (left wheel forward) |
+| `c` | Coast/stop both motors |
+| `Esc` or `q` | Stop and exit |
+
 ### Finding the USB port
 
-In order to work with the Neville, you will need to 
+In order to work with Neville, you will need to know which serial device maps to your USB cable:
+
+1. Plug Neville in and watch the kernel logs for new devices:
+	```bash
+	dmesg | grep -i tty
+	```
+2. List detected devices and their permissions:
+	```bash
+	ls -l /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
+	```
+3. Run the helper script (defaults to `/dev/ttyUSB0`, override with an argument or `NEVILLE_SERIAL_PORT`):
+	```bash
+	./scripts/check-serial-perms.sh
+	./scripts/check-serial-perms.sh /dev/ttyACM0
+	```
+
+Set the `NEVILLE_SERIAL_PORT` environment variable if you need the application to talk to a non-default device:
+
+```bash
+export NEVILLE_SERIAL_PORT=/dev/ttyACM0
+```
+
+### Fixing `serial::IOException (13) Permission denied`
+
+Linux protects serial devices such as `/dev/ttyUSB0` by restricting access to the `dialout` group (or the group listed by `ls -l /dev/ttyUSB0`). If you see `IO Exception (13): Permission denied` when running `./main`, grant your user access:
+
+```bash
+sudo usermod -aG dialout $USER
+newgrp dialout  # or log out and back in / reboot once
+```
+
+You can temporarily grant access until the next reboot/unplug by running `sudo chmod a+rw /dev/ttyUSB0`, but adding your user to `dialout` is the recommended long-term fix.
+
+### Camera configuration & GUI troubleshooting
+
+- The application uses camera index `0` by default. Override it with:
+	```bash
+	export NEVILLE_CAMERA_INDEX=1
+	```
+- If you see `OpenCV(...): The function is not implemented. Rebuild the library with ... GTK+ ...`, install the packages listed above and re-run `./scripts/build-opencv.sh` so that OpenCV is compiled with GTK/V4L support (`-DWITH_GTK=ON -DWITH_V4L=ON`).
+- When a camera cannot be opened, double-check which `/dev/video*` node is created (e.g., with `v4l2-ctl --list-devices`) and ensure no other process is using it.
+- Running inside WSL requires either WSLg (Windows 11) or an X server on Windows. Make sure GUI forwarding works before launching `./build/main`.
