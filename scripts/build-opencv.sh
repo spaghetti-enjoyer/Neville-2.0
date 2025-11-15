@@ -18,6 +18,8 @@ cmake "$PROJECT_ROOT/dependencies/opencv" \
     -DBUILD_TESTS=OFF \
     -DBUILD_PERF_TESTS=OFF \
     -DBUILD_EXAMPLES=OFF \
+    -DWITH_GTK=ON \
+    -DWITH_V4L=ON \
     -DWITH_FFMPEG=OFF \
     -DBUILD_opencv_dnn=OFF \
     -DWITH_PROTOBUF=OFF \
