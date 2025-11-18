@@ -8,7 +8,7 @@
 - at least 2GB of disk space
 
 #### Windows
-- WSL2
+- WSL2 [See warion-dev branch for latest patches]
 
 
 ### How to run your code
