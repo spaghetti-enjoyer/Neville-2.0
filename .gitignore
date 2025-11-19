@@ -3,6 +3,7 @@ opencv-build
 opencv-install
 dependencies/opencv/build
 
+output
 
 todosies
 test.sh
