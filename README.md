@@ -48,6 +48,24 @@ make
 
 After your code is compiled, you will be able to run the executable with `./build/main` from the root of the project (or just `./main` if you are already in the `build/` directory)
 
+#### Forward USB ports to WSL:
+> [!WARNING]  
+> You need to share the USB devices everytime you reboot.
+
+> [!IMPORTANT]  
+> You need to run Powershell as administrator
+
+```powershell
+usbipd list
+usbipd bind --busid <x-y>
+usbipd attach --wsl --busid <x-y>
+```
+Replace <x-y> with the busid from usbipd list, without the <>. Repeat this command twice, once for the reciever and once for the transmitter. 
+
+You can verify that this worked by running `usbipd list` again, which should now show `shared` under `STATE`. You should also be able to see it under WSL using `lsusb`.
+
+The reciever device should have a name like `USB Video, USB Digital Audio, USB Input Device`
+
 #### Quick command recap
 
 ```bash
@@ -66,7 +84,9 @@ cmake --build build
 ./scripts/check-serial-perms.sh
 
 # Run the robot UI (requires GUI/camera access)
-./build/main
+# On WSL, you need to run this with sudo, otherwise it will fail to access the reciever
+# Ensure that you have BOTH the transmitter and reciever plugged in.
+sudo ./build/main
 ```
 
 ### Keyboard controls
@@ -97,13 +117,13 @@ In order to work with Neville, you will need to know which serial device maps to
 3. Run the helper script (defaults to `/dev/ttyUSB0`, override with an argument or `NEVILLE_SERIAL_PORT`):
 	```bash
 	./scripts/check-serial-perms.sh
-	./scripts/check-serial-perms.sh /dev/ttyACM0
+	./scripts/check-serial-perms.sh /dev/ttyUSB0
 	```
 
 Set the `NEVILLE_SERIAL_PORT` environment variable if you need the application to talk to a non-default device:
 
 ```bash
-export NEVILLE_SERIAL_PORT=/dev/ttyACM0
+export NEVILLE_SERIAL_PORT=/dev/ttyUSB0
 ```
 
 ### Fixing `serial::IOException (13) Permission denied`
